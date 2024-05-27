@@ -46,10 +46,10 @@
 # On Windows the install layout is as follows, where NN is the MSVC version
 # used to build the connector:
 #
-#  {lib,lib64}/mysqlcppconnX-vsNN.dll              <-- shared library
-#  {lib,lib64}/vsNN/mysqlcppconnX-static.lib       <-- static with /MD
-#  {lib,lib64}/vsNN/mysqlcppconnX-static-mt.lib    <-- static with /MT
-#  {lib,lib64}/vsNN/mysqlcppconnX.lib              <-- import library for DLL
+#  {bin}/mysqlcppconnX-vsNN.dll              <-- shared library
+#  {lib,lib64}/mysqlcppconnX-static.lib       <-- static with /MD
+#  {lib,lib64}/mysqlcppconnX-static-mt.lib    <-- static with /MT
+#  {lib,lib64}/mysqlcppconnX.lib              <-- import library for DLL
 #
 # On Linux it is as follows, where A.B is the API version number
 #
@@ -102,6 +102,12 @@ if(NOT CMAKE_INSTALL_DOCDIR)
 
 endif()
 
+if(NOT CMAKE_INSTALL_BINDIR)
+
+  set(CMAKE_INSTALL_BINDIR "bin" CACHE STRING
+    "Runtime Install location (Relative to CMAKE_INSTALL_PREFIX)")
+
+endif()
 
 #
 # These variables should be used in install specs.
@@ -113,9 +119,10 @@ endif()
 
 if(NOT INSTALL_LIB_DIR_STATIC)
   set(INSTALL_LIB_DIR_STATIC "${INSTALL_LIB_DIR}")
-  if(VS)
-    set(INSTALL_LIB_DIR_STATIC "${INSTALL_LIB_DIR_STATIC}/${VS}")
-  endif()
+endif()
+
+if(NOT INSTALL_BIN_DIR)
+  set(INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR})
 endif()
 
 if(NOT INSTALL_INCLUDE_DIR)

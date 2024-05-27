@@ -174,14 +174,6 @@ macro(main)
 
   message_info("Include path: ${MYSQL_CONCPP_INCLUDE_DIR}")
 
-  # Note: On windows we look for the import library, not the DLL. This import
-  # library normally is in a ./vsNN subfolder of the library path.
-
-  unset(vs_suffix)
-  if(WIN32)
-    set(vs_suffix vs14)
-  endif()
-
   # Find required dependencies. Currtently this looks for OpenSSL and defines
   # `mysql::openssl` interface library for it if found.
 
@@ -418,7 +410,7 @@ function(add_connector_target which tgt base_name)
   unset(lib_path CACHE)
   find_library(lib_path
     NAMES ${base_name}
-    PATHS ${MYSQL_CONCPP_RUNTIME_LIBRARY_DIR}/${vs_suffix}
+    PATHS ${MYSQL_CONCPP_RUNTIME_LIBRARY_DIR}
     NO_DEFAULT_PATH
     NO_CACHE
   )
@@ -456,28 +448,10 @@ function(add_connector_target which tgt base_name)
   unset(lib_path_debug CACHE)
   find_library(lib_path_debug
     NAMES ${base_name}
-    PATHS ${MYSQL_CONCPP_RUNTIME_LIBRARY_DIR}/${vs_suffix}/debug
+    PATHS ${MYSQL_CONCPP_RUNTIME_LIBRARY_DIR}
     NO_DEFAULT_PATH
     NO_CACHE
   )
-
-  if(lib_path_debug)
-
-    message_info("Found debug variant of ${which} ${type} library at: ${lib_path_debug}")
-
-    set(MYSQL_CONCPP_DEBUG_FOUND 1 PARENT_SCOPE)
-
-    set_target_properties(mysql::${tgt} PROPERTIES
-      IMPORTED_LOCATION_DEBUG "${lib_path_debug}"
-    )
-
-    if(WIN32)
-      set_target_properties(mysql::${tgt} PROPERTIES
-        IMPORTED_IMPLIB_DEBUG "${lib_path_debug}"
-      )
-    endif()
-
-  endif()
 
 endfunction(add_connector_target)
 
@@ -500,7 +474,7 @@ function(find_deps)
     unset(ssl_lib CACHE)
     find_library(ssl_lib
       NAMES ssl libssl
-      PATHS ${LIB_PATH}/${vs_suffix}
+      PATHS ${LIB_PATH}
       NO_DEFAULT_PATH
       NO_CACHE
     )
@@ -508,7 +482,7 @@ function(find_deps)
     unset(ssl_crypto CACHE)
     find_library(ssl_crypto
       NAMES crypto libcrypto
-      PATHS ${LIB_PATH}/${vs_suffix}
+      PATHS ${LIB_PATH}
       NO_DEFAULT_PATH
       NO_CACHE
     )
